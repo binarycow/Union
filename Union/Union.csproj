@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <Version>0.0.2</Version>
         <IsPackable>true</IsPackable>
     </PropertyGroup>
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <LangVersion>9</LangVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.0.2</PackageVersion>
+        <!-- <PackageVersion>0.0.2</PackageVersion> -->
         <Title>Union</Title>
         <Authors>Mike Christiansen</Authors>
         <Copyright>(C) 2021 Mike Christiansen</Copyright>
