@@ -9,3 +9,4 @@
 // Union\Union\Enums\UnionIndexT3.cs
 // Union\Union\Enums\UnionIndexT2.cs
 // Union\Union\Enums\UnionIndexT1.cs
+// Union\Union\Enums\UnionIndexT0.cs

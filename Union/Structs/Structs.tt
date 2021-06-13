@@ -12,7 +12,7 @@
 <#
 var manager = TemplateFileManager.Create(this);
 var numberOfTypes = GetNumberOfTypes();
-for(var typeNumber = 1; typeNumber < numberOfTypes; ++typeNumber)
+for(var typeNumber = 0; typeNumber < numberOfTypes; ++typeNumber)
 {
 
     manager.StartNewFile("UnionT" + typeNumber + ".cs");

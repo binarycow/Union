@@ -10,4 +10,5 @@
 // Union\Union\Structs\UnionT3.cs
 // Union\Union\Structs\UnionT2.cs
 // Union\Union\Structs\UnionT1.cs
+// Union\Union\Structs\UnionT0.cs
 
