@@ -1,0 +1,7 @@
+﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+<#+ 
+int GetNumberOfTypes()
+{
+	return 8;
+}
+#>

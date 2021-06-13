@@ -1,0 +1,113 @@
+﻿<#@ template debug="true" language="C#" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ include file="../TemplateFileManagerV2.1.ttinclude" #>
+<#@ include file="../numTypes.ttinclude" #>
+<#@ Assembly Name="System.Core" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#
+var manager = TemplateFileManager.Create(this);
+var numberOfTypes = GetNumberOfTypes();
+for(var typeNumber = 1; typeNumber < numberOfTypes; ++typeNumber)
+{
+
+    manager.StartNewFile("IUnionT" + typeNumber + ".cs");
+    var tTypes = Enumerable.Range(0, typeNumber + 1).Select(n => string.Format("T{0}", n)).ToList();
+
+    var tList = string.Join(", ", tTypes);
+    var typeName = string.Format("IUnion<{0}>", tList);
+    
+#>
+// Copyright (c) Mike Christiansen. All rights reserved.
+// Licensed under the MIT license.
+// See license.txt file in the project root for full license information.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace Union
+{
+    public interface <#= typeName #> : IUnion
+<#
+    for (var n = 0; n < typeNumber + 1; ++n)
+    {
+#>        where T<#= n #> : notnull
+<#
+    }
+#>
+    {
+<#      WriteSwitchVoid(tTypes); #>
+<#      WriteSwitchRet(tTypes); #>
+        
+        #region As Methods 
+<#      WriteAs(tTypes); #>
+        #endregion As Methods
+        
+        #region Is Methods
+<#      WriteIs(tTypes); #>
+        #endregion Is Methods
+        
+        #region Select Methods
+<#      WriteSelect(typeNumber); #>
+        #endregion Select Methods
+    }
+}
+
+<# } #>
+<# manager.Process(); #>
+
+<#+
+private void WriteSwitchVoid(IEnumerable<string> tTypes)
+{
+    var parameters = string.Join(", ", tTypes.Select((t, i) => string.Format("Action<{0}> f{1}", t, i)));
+#>
+        public void Switch(<#= parameters #>);
+<#+
+}
+#>
+<#+
+private void WriteSwitchRet(IEnumerable<string> tTypes)
+{
+    var parameters = string.Join(", ", tTypes.Select((t, i) => string.Format("Func<{0}, TResult> f{1}", t, i)));
+#>
+        public TResult Switch<TResult>(<#= parameters #>);
+<#+
+}
+#>
+
+<#+
+private void WriteAs(IEnumerable<string> tTypes)
+{
+    foreach(var tItem in tTypes)
+    {
+#>
+        public <#= tItem #>? As<#= tItem #>(); 
+<#+
+    }
+}
+#>
+
+<#+
+private void WriteIs(IEnumerable<string> tTypes)
+{
+    foreach(var tItem in tTypes)
+    {
+#>
+        public bool Is<#= tItem #>([NotNullWhen(true)] out <#= tItem #>? value); 
+<#+
+    }
+}
+#>
+
+<#+
+private void WriteSelect(int typeNumber)
+{
+    for(var lineNumber = 0; lineNumber < typeNumber + 1; ++lineNumber)
+    {
+        var returnTypeArgs = string.Join(", ", Enumerable.Range(0, typeNumber + 1).Select(i => i == lineNumber ? "TResult" : "T" + i.ToString()));
+#>
+        public Union<<#= returnTypeArgs #>> Select<#= lineNumber #><TResult>(Func<T<#= lineNumber #>, TResult> selector) where TResult : notnull;
+<#+
+    }
+}
+#>

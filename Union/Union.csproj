@@ -1,9 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <LangVersion>9</LangVersion>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageVersion>0.0.2</PackageVersion>
+        <Title>Union</Title>
+        <Authors>Mike Christiansen</Authors>
+        <Copyright>(C) 2021 Mike Christiansen</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/binarycow/Union</RepositoryUrl>
+        <TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.0</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,6 +21,53 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Classes\Classes.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>Classes.cs</LastGenOutput>
+      </None>
+      <None Update="Enums\Enums.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>Enums.cs</LastGenOutput>
+      </None>
+      <None Update="Interfaces\Interfaces.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>Interfaces.cs</LastGenOutput>
+      </None>
+      <None Update="Structs\Structs.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>Structs.cs</LastGenOutput>
+      </None>
+      <None Remove="TemplateFileManagerV2.1.ttinclude" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Classes\Classes.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Classes.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Enums\Enums.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Enums.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Interfaces\Interfaces.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Interfaces.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Structs\Structs.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Structs.tt</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

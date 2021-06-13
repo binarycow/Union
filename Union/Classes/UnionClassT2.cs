@@ -8,12 +8,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Union
 {
-    public struct Union<T0, T1, T2> : IUnion, IEquatable<Union<T0, T1, T2>>
+    public class UnionClass<T0, T1, T2> : IUnion, IEquatable<UnionClass<T0, T1, T2>>
         where T0 : notnull
         where T1 : notnull
         where T2 : notnull
     {
-        private Union(UnionIndexT2 index, T0? value0 = default, T1? value1 = default, T2? value2 = default)
+        private UnionClass(UnionIndexT2 index, T0? value0 = default, T1? value1 = default, T2? value2 = default)
         {
             this.Index = index;
             this.value0 = default;
@@ -36,9 +36,9 @@ namespace Union
             }
         }
 
-        public Union(T0 value) : this(UnionIndexT2.T0, value0: value) { }
-        public Union(T1 value) : this(UnionIndexT2.T1, value1: value) { }
-        public Union(T2 value) : this(UnionIndexT2.T2, value2: value) { }
+        public UnionClass(T0 value) : this(UnionIndexT2.T0, value0: value) { }
+        public UnionClass(T1 value) : this(UnionIndexT2.T1, value1: value) { }
+        public UnionClass(T2 value) : this(UnionIndexT2.T2, value2: value) { }
 
         public UnionIndexT2 Index { get; }
 
@@ -122,15 +122,15 @@ namespace Union
         #endregion Is Methods
 
         #region From Methods
-        public static Union<T0, T1, T2> FromT0(T0 t) => new (UnionIndexT2.T0, value0: t);
-        public static Union<T0, T1, T2> FromT1(T1 t) => new (UnionIndexT2.T1, value1: t);
-        public static Union<T0, T1, T2> FromT2(T2 t) => new (UnionIndexT2.T2, value2: t);
+        public static UnionClass<T0, T1, T2> FromT0(T0 t) => new (UnionIndexT2.T0, value0: t);
+        public static UnionClass<T0, T1, T2> FromT1(T1 t) => new (UnionIndexT2.T1, value1: t);
+        public static UnionClass<T0, T1, T2> FromT2(T2 t) => new (UnionIndexT2.T2, value2: t);
         #endregion From Methods
 
         #region Conversions
-        public static implicit operator Union<T0, T1, T2>(T0 t) => FromT0(t);
-        public static implicit operator Union<T0, T1, T2>(T1 t) => FromT1(t);
-        public static implicit operator Union<T0, T1, T2>(T2 t) => FromT2(t);
+        public static implicit operator UnionClass<T0, T1, T2>(T0 t) => FromT0(t);
+        public static implicit operator UnionClass<T0, T1, T2>(T1 t) => FromT1(t);
+        public static implicit operator UnionClass<T0, T1, T2>(T2 t) => FromT2(t);
         #endregion Conversions
         
         #region Select Methods
@@ -182,8 +182,9 @@ namespace Union
 
         #region Equality
         
-        public bool Equals(Union<T0, T1, T2> other) => this.Index switch
+        public bool Equals(UnionClass<T0, T1, T2>? other) => this.Index switch
         {
+            { } when other is null => false,
             { } when this.Index != other.Index => false,
             UnionIndexT2.T0 => EqualityComparer<T0?>.Default.Equals(this.value0, other.value0),
             UnionIndexT2.T1 => EqualityComparer<T1?>.Default.Equals(this.value1, other.value1),
@@ -199,9 +200,9 @@ namespace Union
             _ => throw new InvalidOperationException($"Invalid index {this.Index}"),
         };
 
-        public override bool Equals(object? obj) => obj is Union<T0, T1, T2> other && Equals(other);
-        public static bool operator ==(Union<T0, T1, T2> left, Union<T0, T1, T2> right) => left.Equals(right);
-        public static bool operator !=(Union<T0, T1, T2> left, Union<T0, T1, T2> right) => !left.Equals(right);
+        public override bool Equals(object? obj) => obj is UnionClass<T0, T1, T2> other && Equals(other);
+        public static bool operator ==(UnionClass<T0, T1, T2> left, UnionClass<T0, T1, T2> right) => left.Equals(right);
+        public static bool operator !=(UnionClass<T0, T1, T2> left, UnionClass<T0, T1, T2> right) => !left.Equals(right);
         #endregion Equality
     }
 }

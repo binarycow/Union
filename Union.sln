@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Union", "Union\Union.csproj", "{0F2306D1-9CA3-42A9-9C2E-460FE37E31EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Union.Generator", "Union.Generator\Union.Generator.csproj", "{7D88B900-2F82-4F07-97F2-BAD1A9495D61}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,9 +12,5 @@ Global
 		{0F2306D1-9CA3-42A9-9C2E-460FE37E31EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F2306D1-9CA3-42A9-9C2E-460FE37E31EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F2306D1-9CA3-42A9-9C2E-460FE37E31EC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D88B900-2F82-4F07-97F2-BAD1A9495D61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D88B900-2F82-4F07-97F2-BAD1A9495D61}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D88B900-2F82-4F07-97F2-BAD1A9495D61}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D88B900-2F82-4F07-97F2-BAD1A9495D61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -15,7 +15,7 @@ namespace Union
     
     public readonly struct None 
     {
-        public static Union<T, None> Of<T>(T t) => new None();
+        public static Union<T, None> Of<T>(T t) where T : notnull => new None();
     }
 
     public readonly struct NotFound { }

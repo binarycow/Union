@@ -1,0 +1,410 @@
+﻿<#@ template debug="true" language="C#" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ include file="../TemplateFileManagerV2.1.ttinclude" #>
+<#@ include file="../numTypes.ttinclude" #>
+<#@ Assembly Name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#
+var manager = TemplateFileManager.Create(this);
+var numberOfTypes = GetNumberOfTypes();
+for(var typeNumber = 1; typeNumber < numberOfTypes; ++typeNumber)
+{
+
+    manager.StartNewFile("UnionT" + typeNumber + ".cs");
+    var tTypes = Enumerable.Range(0, typeNumber + 1).Select(n => string.Format("T{0}", n));
+
+    var tList = string.Join(", ", tTypes);
+    var typeName = string.Format("Union<{0}>", tList);
+    
+#>
+// Copyright (c) Mike Christiansen. All rights reserved.
+// Licensed under the MIT license.
+// See license.txt file in the project root for full license information.
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+
+namespace Union
+{
+    public struct <#= typeName #> : IUnion, IEquatable<<#= typeName #>>
+<#
+    for (var n = 0; n < typeNumber + 1; ++n)
+    {
+#>        where T<#= n #> : notnull
+<#
+    }
+#>
+    {
+<#      WritePrivateConstructor(typeNumber);  #>
+
+<#      WritePublicConstructors(typeNumber);  #>
+
+<#      WriteFields(typeNumber);  #>
+
+<#      WriteValue(typeNumber);  #>
+
+<#      WriteSwitchVoid(typeNumber); #>
+
+<#      WriteSwitchRet(typeNumber); #>
+        
+        #region As Methods 
+<#      WriteAs(typeNumber); #>
+        #endregion As Methods
+        
+        #region Is Methods
+<#      WriteIs(typeNumber); #>
+        #endregion Is Methods
+
+        #region From Methods
+<#      WriteFrom(typeName, typeNumber); #>
+        #endregion From Methods
+
+        #region Conversions
+<#      WriteConversion(typeName, typeNumber); #>
+        #endregion Conversions
+        
+        #region Select Methods
+<#      WriteSelect(typeNumber); #>
+        #endregion Select Methods
+        
+<#      WriteToString(typeNumber); #>
+
+        #region Equality
+        
+<#      WriteEquals(typeName, typeNumber); #>
+
+<#      WriteGetHashcode(typeNumber); #>
+
+        public override bool Equals(object? obj) => obj is <#= typeName #> other && Equals(other);
+        public static bool operator ==(<#= typeName #> left, <#= typeName #> right) => left.Equals(right);
+        public static bool operator !=(<#= typeName #> left, <#= typeName #> right) => !left.Equals(right);
+        #endregion Equality
+    }
+}
+
+<# } #>
+<# manager.Process(); #>
+
+<#+
+private void WritePrivateConstructor(int typeNumber)
+{
+        var constructorParams = string.Join(", ", Enumerable.Range(0, typeNumber + 1).Select(n => string.Format("T{0}? value{0} = default", n)));
+#>
+        private Union(UnionIndexT<#= typeNumber #> index, <#= constructorParams #>)
+        {
+            this.Index = index;
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+            this.value<#= typeIndex #> = default;
+<#+
+    }
+#>            switch (this.Index)
+            {
+
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+                case UnionIndexT<#= typeNumber #>.T<#= typeIndex #>:
+                    this.value<#= typeIndex #> = value<#= typeIndex #> ?? throw new ArgumentNullException(nameof(value<#= typeIndex #>));
+                    break;
+<#+
+    }
+#>
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(index));
+            }
+        }
+<#+
+}
+#>
+
+<#+
+private void WriteFields(int typeNumber)
+{
+
+#>
+        public UnionIndexT<#= typeNumber #> Index { get; }
+
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+        private readonly T<#= typeIndex #>? value<#= typeIndex #>; 
+<#+
+    }
+#>
+        int IUnion.Index => (int) Index;
+<#+
+}
+#>
+
+<#+
+private void WriteValue(int typeNumber)
+{
+#>
+        public object Value => Index switch
+        {
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+            UnionIndexT<#= typeNumber #>.T<#= typeIndex #> when value<#= typeIndex #> is not null => value<#= typeIndex #>,
+<#+
+    }
+#>
+            _ => throw new InvalidOperationException(),
+        };
+<#+
+}
+#>
+
+
+<#+
+private void WriteSwitchVoid(int typeNumber)
+{
+    var parameters = string.Join(", ", Enumerable.Range(0, typeNumber + 1).Select((t, i) => string.Format("Action<T{0}> f{1}", t, i)));
+#>
+        public void Switch(<#= parameters #>)
+        {
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+            f<#= typeIndex #> = f<#= typeIndex #> ?? throw new ArgumentNullException(nameof(f<#= typeIndex #>));
+<#+
+    }
+#>
+            switch (this.Index)
+            {
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+                case UnionIndexT<#= typeNumber #>.T<#= typeIndex #> when value<#= typeIndex #> is not null:
+                    f<#= typeIndex #>(this.value<#= typeIndex #>);
+                    return;
+<#+
+    }
+#>
+            }
+        }
+<#+
+}
+#>
+
+
+<#+
+private void WriteSwitchRet(int typeNumber)
+{
+    var parameters = string.Join(", ", Enumerable.Range(0, typeNumber + 1).Select((t, i) => string.Format("Func<T{0}, TResult> f{1}", t, i)));
+#>
+        public TResult Switch<TResult>(<#= parameters #>)
+        {
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+            f<#= typeIndex #> = f<#= typeIndex #> ?? throw new ArgumentNullException(nameof(f<#= typeIndex #>));
+<#+
+    }
+#>
+            return this.Index switch
+            {
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+                UnionIndexT<#= typeNumber #>.T<#= typeIndex #> when value<#= typeIndex #> is not null => f<#= typeIndex #>(this.value<#= typeIndex #>),
+<#+
+    }
+#>
+                _ => throw new InvalidOperationException(),
+            };
+        }
+<#+
+}
+#>
+
+
+<#+
+private void WriteAs(int typeNumber)
+{
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+        public T<#= typeIndex #>? AsT<#= typeIndex #>() 
+            => this.Index == UnionIndexT<#= typeNumber #>.T<#= typeIndex #> 
+                ? value<#= typeIndex #> 
+                : throw new InvalidOperationException($"Cannot return as T<#= typeIndex #> as result is T{this.Index}");
+<#+
+    }
+}
+#>
+
+
+<#+
+private void WriteIs(int typeNumber)
+{
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+        public bool IsT<#= typeIndex #>([NotNullWhen(true)] out T<#= typeIndex #>? value)
+        {
+            value = this.Index == UnionIndexT<#= typeNumber #>.T<#= typeIndex #> ? value<#= typeIndex #> : default;
+            return this.Index == UnionIndexT<#= typeNumber #>.T<#= typeIndex #> && !(value is null);
+        }
+<#+
+    }
+}
+#>
+
+
+<#+
+private void WriteSelect(int typeNumber)
+{
+    for(var lineNumber = 0; lineNumber < typeNumber + 1; ++lineNumber)
+    {
+        var returnTypeArgs = string.Join(", ", Enumerable.Range(0, typeNumber + 1).Select(i => i == lineNumber ? "TResult" : "T" + i.ToString()));
+        var returnType = string.Format("Union<{0}>", returnTypeArgs);
+#>
+        public <#= returnType #> Select<#= lineNumber #><TResult>(Func<T<#= lineNumber #>, TResult> selector)
+            where TResult : notnull
+        {
+            selector = selector ?? throw new ArgumentNullException(nameof(selector));
+            return this.Index switch
+            {
+<#+
+        for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+        {
+            if(typeIndex == lineNumber)
+            {
+#>
+                UnionIndexT<#= typeNumber #>.T<#= typeIndex #> when this.value<#= typeIndex #> is not null => selector(this.value<#= typeIndex #>),
+<#+
+            }
+            else
+            {
+#>
+                UnionIndexT<#= typeNumber #>.T<#= typeIndex #> when this.value<#= typeIndex #> is not null => <#= returnType #>.FromT<#= typeIndex #>(this.value<#= typeIndex #>),
+<#+
+            }
+        }
+#>                _ => throw new InvalidOperationException(),
+            };
+        }
+<#+
+    }
+}
+#>
+
+
+<#+
+private void WriteFrom(string typeName, int typeNumber)
+{
+    for(var lineNumber = 0; lineNumber < typeNumber + 1; ++lineNumber)
+    {
+#>
+        public static <#= typeName #> FromT<#= lineNumber #>(T<#= lineNumber #> t) => new (UnionIndexT<#= typeNumber #>.T<#= lineNumber #>, value<#= lineNumber #>: t);
+<#+
+    }
+}
+#>
+
+
+<#+
+private void WritePublicConstructors(int typeNumber)
+{
+    for(var lineNumber = 0; lineNumber < typeNumber + 1; ++lineNumber)
+    {
+#>
+        public Union(T<#= lineNumber #> value) : this(UnionIndexT<#= typeNumber #>.T<#= lineNumber #>, value<#= lineNumber #>: value) { }
+<#+
+    }
+}
+#>
+
+
+<#+
+private void WriteConversion(string typeName, int typeNumber)
+{
+    for(var lineNumber = 0; lineNumber < typeNumber + 1; ++lineNumber)
+    {
+#>
+        public static implicit operator <#= typeName #>(T<#= lineNumber #> t) => FromT<#= lineNumber #>(t);
+<#+
+    }
+}
+#>
+
+
+<#+
+private void WriteToString(int typeNumber)
+{
+#>
+        public override string ToString() => this.Index switch
+        {
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+            UnionIndexT<#= typeNumber #>.T<#= typeIndex #> => $"{typeof(T<#= typeIndex #>)}: {value<#= typeIndex #>}",
+<#+
+    }
+#>
+            _ => throw new InvalidOperationException(),
+        };
+<#+
+}
+#>
+
+
+<#+
+private void WriteEquals(string typeName, int typeNumber)
+{
+#>
+        public bool Equals(<#= typeName #> other) => this.Index switch
+        {
+            { } when this.Index != other.Index => false,
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+            UnionIndexT<#= typeNumber #>.T<#= typeIndex #> => EqualityComparer<T<#= typeIndex #>?>.Default.Equals(this.value<#= typeIndex #>, other.value<#= typeIndex #>),
+<#+
+    }
+#>
+            _ => throw new InvalidOperationException($"Invalid index {this.Index}"),
+        };
+<#+
+}
+#>
+
+
+<#+
+private void WriteGetHashcode(int typeNumber)
+{
+#>
+        public override int GetHashCode() => this.Index switch
+        {
+<#+
+    for(var typeIndex = 0; typeIndex < typeNumber + 1; ++typeIndex)
+    {
+#>
+            UnionIndexT<#= typeNumber #>.T<#= typeIndex #> => HashCode.Combine(this.Index, this.value<#= typeIndex #>),
+<#+
+    }
+#>
+            _ => throw new InvalidOperationException($"Invalid index {this.Index}"),
+        };
+<#+
+}
+#>

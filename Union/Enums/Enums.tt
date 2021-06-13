@@ -1,0 +1,37 @@
+﻿<#@ template debug="true" language="C#" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ include file="../TemplateFileManagerV2.1.ttinclude" #>
+<#@ include file="../numTypes.ttinclude" #>
+<#@ Assembly Name="System.Core" #>
+<#
+var manager = TemplateFileManager.Create(this);
+var numberOfTypes = GetNumberOfTypes();
+for(var typeNumber = 1; typeNumber < numberOfTypes; ++typeNumber)
+{
+    manager.StartNewFile("UnionIndexT" + typeNumber + ".cs");
+    var typeName = string.Format("UnionIndexT{0}", typeNumber);
+    
+#>
+// Copyright (c) Mike Christiansen. All rights reserved.
+// Licensed under the MIT license.
+// See license.txt file in the project root for full license information.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace Union
+{
+    public enum <#= typeName #>
+    {
+<#      
+    for(var index = 0; index < typeNumber + 1; ++index)
+    {
+        #>        T<#= index #> = <#= index #>,
+<#
+    }
+#>
+    }
+}
+
+<# } #>
+<# manager.Process(); #>
