@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Union
 {
-    public struct Union<T0, T1> : IUnion, IEquatable<Union<T0, T1>>
+    public readonly struct Union<T0, T1> : IUnion, IEquatable<Union<T0, T1>>
         where T0 : notnull
         where T1 : notnull
     {

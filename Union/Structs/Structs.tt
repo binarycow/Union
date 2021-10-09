@@ -32,7 +32,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Union
 {
-    public struct <#= typeName #> : IUnion, IEquatable<<#= typeName #>>
+    public readonly struct <#= typeName #> : IUnion, IEquatable<<#= typeName #>>
 <#
     for (var n = 0; n < typeNumber + 1; ++n)
     {
