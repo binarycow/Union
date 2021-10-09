@@ -48,6 +48,8 @@ namespace Union
         public Union<T0, T1, T2, T3, T4, TResult, T6> Select5<TResult>(Func<T5, TResult> selector) where TResult : notnull;
         public Union<T0, T1, T2, T3, T4, T5, TResult> Select6<TResult>(Func<T6, TResult> selector) where TResult : notnull;
         #endregion Select Methods
+
+        public Union<T0, T1, T2, T3, T4, T5, T6, TResult> With<TResult>(TResult value) where TResult : notnull;
     }
 }
 

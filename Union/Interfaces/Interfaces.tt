@@ -50,6 +50,8 @@ namespace Union
         #region Select Methods
 <#      WriteSelect(typeNumber); #>
         #endregion Select Methods
+
+<#      WriteWith(typeNumber); #>
     }
 }
 
@@ -109,5 +111,16 @@ private void WriteSelect(int typeNumber)
         public Union<<#= returnTypeArgs #>> Select<#= lineNumber #><TResult>(Func<T<#= lineNumber #>, TResult> selector) where TResult : notnull;
 <#+
     }
+}
+#>
+
+
+<#+
+private void WriteWith(int typeNumber)
+{
+    var returnTypeArgs = string.Join(", ", Enumerable.Range(0, typeNumber + 2).Select(i => i == typeNumber + 1 ? "TResult" : "T" + i.ToString()));
+#>
+        public Union<<#= returnTypeArgs #>> With<TResult>(TResult value) where TResult : notnull;
+<#+
 }
 #>
