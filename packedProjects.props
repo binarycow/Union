@@ -1,0 +1,17 @@
+﻿<Project>
+  <PropertyGroup>
+    <Version>0.0.3</Version>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>9</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>Union</Title>
+    <Authors>Mike Christiansen</Authors>
+    <Copyright>(C) 2021 Mike Christiansen</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/binarycow/Union</RepositoryUrl>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

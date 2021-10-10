@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Union.Demo</RootNamespace>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <!-- Use following lines to write the generated files to disk. -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="IntermediateOutputPath" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Union.BasicTypes\Union.BasicTypes.csproj" />
+    <ProjectReference Include="..\Union.SourceGenerator\Union.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Union\Union.csproj" />
+  </ItemGroup>
+
+</Project>
